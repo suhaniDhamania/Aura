@@ -1,5 +1,6 @@
 const Mood = require('../models/Mood');
 const User = require('../models/User');
+const { detectEmotion } = require('../utils/aiHandler');
 
 exports.logMood = async (req, res) => {
     try {
@@ -37,6 +38,34 @@ exports.getMoodHistory = async (req, res) => {
                                 .sort({ date: -1 })
                                 .limit(30);
         res.json(moods);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+};
+
+exports.getMoodConfig = async (req, res) => {
+    // This could also be stored in a "Config" collection in MongoDB
+    const moodConfig = {
+        awesome: { icon: '🤩', label: 'Awesome', color: '#10b981' },
+        good: { icon: '🙂', label: 'Good', color: '#0ea5e9' },
+        energetic: { icon: '⚡', label: 'Energetic', color: '#8b5cf6' },
+        neutral: { icon: '😐', label: 'Neutral', color: '#64748b' },
+        sad: { icon: '😔', label: 'Sad', color: '#f43f5e' },
+        stressed: { icon: '😫', label: 'Stressed', color: '#f59e0b' }
+    };
+    res.json(moodConfig);
+};
+
+exports.predictMood = async (req, res) => {
+    try {
+        const { text } = req.body;
+        if (!text) {
+            return res.status(400).json({ message: 'Text is required for prediction' });
+        }
+
+        const predictedMood = await detectEmotion(text);
+        res.json({ moodType: predictedMood });
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server Error');

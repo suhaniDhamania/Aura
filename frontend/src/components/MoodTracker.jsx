@@ -6,25 +6,28 @@ import moodService from '../api/moodService';
 import { useTheme } from '../context/ThemeContext';
 import './MoodTracker.css';
 
-const moodConfig = {
-    awesome: { icon: '🤩', label: 'Awesome', color: '#10b981' }, // Emerald
-    good: { icon: '🙂', label: 'Good', color: '#0ea5e9' }, // Ocean
-    energetic: { icon: '⚡', label: 'Energetic', color: '#8b5cf6' }, // Purple
-    neutral: { icon: '😐', label: 'Neutral', color: '#64748b' }, // Slate
-    sad: { icon: '😔', label: 'Sad', color: '#f43f5e' }, // Rose
-    stressed: { icon: '😫', label: 'Stressed', color: '#f59e0b' } // Amber
-};
-
 const MoodTracker = ({ onMoodLogged }) => {
     const { updateTheme } = useTheme();
+    const [moodConfig, setMoodConfig] = useState({});
     const [selectedMood, setSelectedMood] = useState(null);
     const [note, setNote] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isPredicting, setIsPredicting] = useState(false);
     const [history, setHistory] = useState([]);
 
     useEffect(() => {
+        fetchMoodConfig();
         fetchHistory();
     }, []);
+
+    const fetchMoodConfig = async () => {
+        try {
+            const config = await moodService.getMoodConfig();
+            setMoodConfig(config);
+        } catch (error) {
+            console.error("Failed to load mood configuration", error);
+        }
+    };
 
     const fetchHistory = async () => {
         try {
@@ -42,6 +45,29 @@ const MoodTracker = ({ onMoodLogged }) => {
             primary: moodConfig[moodKey].color,
             glassBlur: moodKey === 'energetic' ? '15px' : '30px' // Energetic makes it sharper! 
         });
+    };
+
+    const handleAiPredict = async () => {
+        if (!note || note.trim().length < 5) {
+            return toast.error("Please write a bit more to detect your mood.");
+        }
+
+        setIsPredicting(true);
+        const toastId = toast.loading('AI is analyzing your Aura...');
+        
+        try {
+            const data = await moodService.predictMood(note);
+            if (data.moodType && data.moodType !== 'neutral') {
+                handleMoodSelect(data.moodType);
+                toast.success(`AI suggests: ${moodConfig[data.moodType].label}`, { id: toastId });
+            } else {
+                toast("AI is unsure. Please select manually.", { id: toastId, icon: '🤔' });
+            }
+        } catch (error) {
+            toast.error("AI Sync failed", { id: toastId });
+        } finally {
+            setIsPredicting(false);
+        }
     };
 
     const handleLogMood = async (e) => {
@@ -124,6 +150,15 @@ const MoodTracker = ({ onMoodLogged }) => {
                             maxLength={100}
                             className="mood-note-input"
                         />
+                        <button 
+                            type="button" 
+                            className={`ai-predict-btn ${isPredicting ? 'spinning' : ''}`}
+                            onClick={handleAiPredict}
+                            title="Auto-detect mood using AI"
+                            disabled={isPredicting || !note.trim()}
+                        >
+                            <Sparkles size={16} />
+                        </button>
                     </div>
 
                     <button type="submit" className="log-aura-btn" disabled={isSubmitting || !selectedMood}>
@@ -144,15 +179,16 @@ const MoodTracker = ({ onMoodLogged }) => {
                 </div>
                 <div className="heatmap-grid" title="Hover over days to see details">
                     {daysArray.map((day, idx) => {
-                        const color = day.entry ? moodConfig[day.entry.moodType].color : 'rgba(255, 255, 255, 0.05)';
-                        const glow = day.entry ? `0 0 10px ${color}88` : 'none';
+                        const moodData = day.entry ? moodConfig[day.entry.moodType] : null;
+                        const color = moodData ? moodData.color : 'rgba(255, 255, 255, 0.05)';
+                        const glow = moodData ? `0 0 10px ${color}88` : 'none';
 
                         return (
                             <div 
                                 key={idx} 
                                 className="heatmap-block"
                                 style={{ backgroundColor: color, boxShadow: glow }}
-                                title={`${day.dateStr}${day.entry ? ` - ${moodConfig[day.entry.moodType].label}` : ' - No log'}`}
+                                title={`${day.dateStr}${moodData ? ` - ${moodData.label}` : ' - No log'}`}
                             ></div>
                         );
                     })}

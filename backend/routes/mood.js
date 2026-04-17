@@ -13,4 +13,14 @@ router.post('/', auth, moodController.logMood);
 // @access  Private
 router.get('/', auth, moodController.getMoodHistory);
 
+// @route   GET api/mood/config
+// @desc    Get mood configuration (labels, icons, colors)
+// @access  Public
+router.get('/config', moodController.getMoodConfig);
+
+// @route   POST api/mood/predict
+// @desc    Predict mood from text using AI
+// @access  Private
+router.post('/predict', auth, moodController.predictMood);
+
 module.exports = router;

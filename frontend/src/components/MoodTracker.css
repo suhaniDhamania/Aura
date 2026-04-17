@@ -102,6 +102,46 @@
     box-shadow: 0 0 15px var(--card-glow);
 }
 
+.ai-predict-btn {
+    position: absolute;
+    right: 0.8rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: linear-gradient(135deg, #10b981, #0ea5e9);
+    border: none;
+    border-radius: 8px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+}
+
+.ai-predict-btn:hover:not(:disabled) {
+    transform: translateY(-50%) scale(1.1);
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.5);
+}
+
+.ai-predict-btn:disabled {
+    opacity: 0.5;
+    background: #4a4a4a;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+@keyframes spin {
+    from { transform: translateY(-50%) rotate(0deg); }
+    to { transform: translateY(-50%) rotate(360deg); }
+}
+
+.ai-predict-btn.spinning {
+    animation: spin 1s linear infinite;
+}
+
 .log-aura-btn {
     width: 100%;
     background: var(--primary);
