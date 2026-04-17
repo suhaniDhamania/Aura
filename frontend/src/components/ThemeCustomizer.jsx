@@ -1,7 +1,9 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Palette, Sun, Moon, Zap, Droplets } from 'lucide-react';
+import toast from 'react-hot-toast';
 import { useTheme } from '../context/ThemeContext';
+import authService from '../api/authService';
 import './ThemeCustomizer.css';
 
 const presets = [
@@ -25,6 +27,7 @@ const presets = [
 
 const ThemeCustomizer = ({ isOpen, onClose }) => {
     const { theme, updateTheme } = useTheme();
+    const [isSaving, setIsSaving] = React.useState(false);
 
     const handleColorChange = (key, value) => {
         updateTheme({ [key]: value });
@@ -33,6 +36,27 @@ const ThemeCustomizer = ({ isOpen, onClose }) => {
     const handleSliderChange = (key, value) => {
         const val = key === 'glassBlur' ? `${value}px` : value;
         updateTheme({ [key]: val });
+    };
+
+    const handleSaveTheme = async () => {
+        setIsSaving(true);
+        const toastId = toast.loading('Saving theme preferences...');
+        try {
+            const data = await authService.updateUserTheme(theme);
+            toast.success(data.message, { id: toastId });
+            
+            // Update local storage so settings persist on refresh
+            const userStr = localStorage.getItem('user');
+            if (userStr) {
+                const userObj = JSON.parse(userStr);
+                userObj.themeConfig = theme;
+                localStorage.setItem('user', JSON.stringify(userObj));
+            }
+        } catch (err) {
+            toast.error(err.message || 'Error saving theme.', { id: toastId });
+        } finally {
+            setIsSaving(false);
+        }
     };
 
     return (
@@ -131,7 +155,9 @@ const ThemeCustomizer = ({ isOpen, onClose }) => {
                         </div>
 
                         <div className="customizer-footer">
-                            <button className="save-theme-btn">Save to Profile</button>
+                            <button className="save-theme-btn" onClick={handleSaveTheme} disabled={isSaving}>
+                                {isSaving ? 'Saving...' : 'Save to Profile'}
+                            </button>
                         </div>
                     </motion.div>
                 </>

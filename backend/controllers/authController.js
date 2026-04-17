@@ -30,7 +30,8 @@ exports.signup = async (req, res) => {
             user: {
                 id: user._id,
                 username: user.username,
-                email: user.email
+                email: user.email,
+                themeConfig: user.themeConfig
             }
         });
     } catch (err) {
@@ -68,7 +69,8 @@ exports.login = async (req, res) => {
             user: {
                 id: user._id,
                 username: user.username,
-                email: user.email
+                email: user.email,
+                themeConfig: user.themeConfig
             }
         });
     } catch (err) {
@@ -159,5 +161,25 @@ exports.resetPassword = async (req, res) => {
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Server error' });
+    }
+};
+
+exports.updateTheme = async (req, res) => {
+    try {
+        const { themeConfig } = req.body;
+        // User ID is attached to req by the auth middleware
+        const user = await User.findById(req.user.id);
+        
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        user.themeConfig = themeConfig;
+        await user.save();
+
+        res.json({ message: 'Theme settings saved successfully', themeConfig: user.themeConfig });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
     }
 };

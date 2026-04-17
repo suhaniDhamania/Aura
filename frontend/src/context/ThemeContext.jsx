@@ -5,18 +5,33 @@ const ThemeContext = createContext();
 export const useTheme = () => useContext(ThemeContext);
 
 export const ThemeProvider = ({ children }) => {
-    // Default theme settings
-    const [theme, setTheme] = useState({
-        primary: '#6366f1',
-        primaryDark: '#4f46e5',
-        bgGradientStart: '#1e1b4b',
-        bgGradientEnd: '#0f172a',
-        glassBlur: '40px',
-        glassOpacity: '0.7',
-        cardBorder: 'rgba(255, 255, 255, 0.1)',
-        cardGlow: 'rgba(99, 102, 241, 0.1)',
-        textPrimary: '#f8fafc',
-        textSecondary: '#94a3b8'
+    const [theme, setTheme] = useState(() => {
+        const defaultTheme = {
+            primary: '#6366f1',
+            primaryDark: '#4f46e5',
+            bgGradientStart: '#1e1b4b',
+            bgGradientEnd: '#0f172a',
+            glassBlur: '40px',
+            glassOpacity: '0.7',
+            cardBorder: 'rgba(255, 255, 255, 0.1)',
+            cardGlow: 'rgba(99, 102, 241, 0.1)',
+            textPrimary: '#f8fafc',
+            textSecondary: '#94a3b8'
+        };
+        
+        try {
+            const userStr = localStorage.getItem('user');
+            if (userStr) {
+                const userObj = JSON.parse(userStr);
+                if (userObj && userObj.themeConfig && Object.keys(userObj.themeConfig).length > 0) {
+                    return { ...defaultTheme, ...userObj.themeConfig };
+                }
+            }
+        } catch (e) {
+            console.error('Error parsing theme from storage:', e);
+        }
+        
+        return defaultTheme;
     });
 
     // Apply theme changes to CSS variables

@@ -46,6 +46,20 @@ const authService = {
         } catch (error) {
             throw error.response?.data || { message: 'Network error or server down' };
         }
+    },
+
+    updateUserTheme: async (themeConfig) => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.post(
+                `${API_BASE_URL}/auth/update-theme`, 
+                { themeConfig },
+                { headers: { 'x-auth-token': token } }
+            );
+            return response.data;
+        } catch (error) {
+            throw error.response?.data || { message: 'Network error or server down' };
+        }
     }
 };
 
