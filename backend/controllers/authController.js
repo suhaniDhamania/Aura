@@ -20,7 +20,8 @@ exports.signup = async (req, res) => {
         user = new User({
             username,
             email,
-            password: hashedPassword
+            password: hashedPassword,
+            activities: [{ text: 'Account created successfully', type: 'success' }]
         });
 
         await user.save();
@@ -62,6 +63,11 @@ exports.login = async (req, res) => {
             process.env.JWT_SECRET,
             { expiresIn: '1h' }
         );
+
+        user.activities.push({ text: 'Successful login', type: 'info' });
+        // Keep array size manageable (last 50)
+        if (user.activities.length > 50) user.activities.shift();
+        await user.save();
 
         res.json({
             message: 'Login successful',
@@ -155,6 +161,8 @@ exports.resetPassword = async (req, res) => {
         // Clear OTP fields
         user.resetPasswordOTP = undefined;
         user.resetPasswordExpires = undefined;
+        
+        user.activities.push({ text: 'Password was reset securely', type: 'warning' });
         await user.save();
 
         res.json({ message: 'Password reset successful. You can now login.' });
@@ -175,9 +183,58 @@ exports.updateTheme = async (req, res) => {
         }
 
         user.themeConfig = themeConfig;
+        user.activities.push({ text: 'Personalization settings updated', type: 'info' });
         await user.save();
 
         res.json({ message: 'Theme settings saved successfully', themeConfig: user.themeConfig });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+};
+
+exports.getProfile = async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id).select('-password');
+        if (!user) return res.status(404).json({ message: 'User not found' });
+        
+        res.json(user);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+};
+
+exports.updateProfile = async (req, res) => {
+    try {
+        const { username, bio, avatar } = req.body;
+        const user = await User.findById(req.user.id);
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        if (username) user.username = username;
+        if (bio !== undefined) user.bio = bio;
+        if (avatar) user.avatar = avatar;
+
+        user.activities.push({ text: 'Profile information updated', type: 'success' });
+        // Keep array size manageable
+        if (user.activities.length > 50) user.activities.shift();
+        
+        await user.save();
+
+        res.json({ 
+            message: 'Profile updated successfully', 
+            user: {
+                id: user._id,
+                username: user.username,
+                email: user.email,
+                avatar: user.avatar,
+                bio: user.bio,
+                themeConfig: user.themeConfig
+            } 
+        });
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server Error');

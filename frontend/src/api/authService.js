@@ -60,6 +60,33 @@ const authService = {
         } catch (error) {
             throw error.response?.data || { message: 'Network error or server down' };
         }
+    },
+    
+    getProfile: async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get(
+                `${API_BASE_URL}/auth/me`,
+                { headers: { 'x-auth-token': token } }
+            );
+            return response.data;
+        } catch (error) {
+            throw error.response?.data || { message: 'Network error or server down' };
+        }
+    },
+
+    updateProfile: async (profileData) => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.put(
+                `${API_BASE_URL}/auth/profile`,
+                profileData,
+                { headers: { 'x-auth-token': token } }
+            );
+            return response.data;
+        } catch (error) {
+            throw error.response?.data || { message: 'Network error or server down' };
+        }
     }
 };
 

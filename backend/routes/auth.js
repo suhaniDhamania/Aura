@@ -17,4 +17,14 @@ router.post('/reset-password', authController.resetPassword);
 // @access  Private
 router.post('/update-theme', auth, authController.updateTheme);
 
+// @route   GET api/auth/me
+// @desc    Get user profile and timeline data
+// @access  Private
+router.get('/me', auth, authController.getProfile);
+
+// @route   PUT api/auth/profile
+// @desc    Update user profile data
+// @access  Private
+router.put('/profile', auth, authController.updateProfile);
+
 module.exports = router;

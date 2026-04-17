@@ -24,7 +24,20 @@ const userSchema = new mongoose.Schema({
     themeConfig: {
         type: Object,
         default: {}
-    }
+    },
+    avatar: {
+        type: String,
+        default: ''
+    },
+    bio: {
+        type: String,
+        default: ''
+    },
+    activities: [{
+        text: String,
+        type: { type: String, default: 'info' }, // 'info', 'success', 'warning'
+        createdAt: { type: Date, default: Date.now }
+    }]
 }, { timestamps: true });
 
 module.exports = mongoose.model('User', userSchema);
