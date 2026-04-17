@@ -7,6 +7,7 @@ import ThemeCustomizer from './ThemeCustomizer';
 import ProfileSettings from './ProfileSettings';
 import NotificationsPanel from './NotificationsPanel';
 import SettingsPanel from './SettingsPanel';
+import MoodTracker from './MoodTracker';
 import authService from '../api/authService';
 import './Dashboard.css';
 
@@ -145,29 +146,8 @@ const Dashboard = () => {
                                         <p>Your session is active. You have {profileData?.activities?.length || 0} recorded activities.</p>
                                     </motion.div>
 
-                                    <div className="stats-grid">
-                                        <motion.div className="stat-card" whileHover={{ y: -5 }}>
-                                            <div className="stat-icon" style={{color: 'var(--primary)'}}>⏱️</div>
-                                            <div className="stat-info">
-                                                <span className="stat-label">Total Logs</span>
-                                                <span className="stat-value">{profileData?.activities?.length || 0}</span>
-                                            </div>
-                                        </motion.div>
-                                        <motion.div className="stat-card" whileHover={{ y: -5 }}>
-                                            <div className="stat-icon" style={{color: '#10b981'}}>🛡️</div>
-                                            <div className="stat-info">
-                                                <span className="stat-label">Security</span>
-                                                <span className="stat-value">Optimized</span>
-                                            </div>
-                                        </motion.div>
-                                        <motion.div className="stat-card" whileHover={{ y: -5 }}>
-                                            <div className="stat-icon" style={{color: '#f472b6'}}>🎨</div>
-                                            <div className="stat-info">
-                                                <span className="stat-label">Theme</span>
-                                                <span className="stat-value">Personalized</span>
-                                            </div>
-                                        </motion.div>
-                                    </div>
+                                    {/* The Killer Feature */}
+                                    <MoodTracker onMoodLogged={fetchProfile} />
 
                                     <motion.div 
                                         className="recent-activity"
