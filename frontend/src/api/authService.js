@@ -87,6 +87,20 @@ const authService = {
         } catch (error) {
             throw error.response?.data || { message: 'Network error or server down' };
         }
+    },
+
+    markNotificationsRead: async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.put(
+                `${API_BASE_URL}/auth/notifications/read`,
+                {},
+                { headers: { 'x-auth-token': token } }
+            );
+            return response.data;
+        } catch (error) {
+            throw error.response?.data || { message: 'Network error or server down' };
+        }
     }
 };
 

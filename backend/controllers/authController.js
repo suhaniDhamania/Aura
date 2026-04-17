@@ -21,7 +21,8 @@ exports.signup = async (req, res) => {
             username,
             email,
             password: hashedPassword,
-            activities: [{ text: 'Account created successfully', type: 'success' }]
+            activities: [{ text: 'Account created successfully', type: 'success' }],
+            notifications: [{ title: 'Welcome to Aura!', message: 'Explore the dashboard and start personalizing your theme.', isRead: false }]
         });
 
         await user.save();
@@ -235,6 +236,21 @@ exports.updateProfile = async (req, res) => {
                 themeConfig: user.themeConfig
             } 
         });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+};
+
+exports.markNotificationsRead = async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id);
+        if (!user) return res.status(404).json({ message: 'User not found' });
+
+        user.notifications.forEach(notif => notif.isRead = true);
+        await user.save();
+
+        res.json({ message: 'Notifications marked as read' });
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server Error');

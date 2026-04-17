@@ -27,4 +27,9 @@ router.get('/me', auth, authController.getProfile);
 // @access  Private
 router.put('/profile', auth, authController.updateProfile);
 
+// @route   PUT api/auth/notifications/read
+// @desc    Mark all user notifications as read
+// @access  Private
+router.put('/notifications/read', auth, authController.markNotificationsRead);
+
 module.exports = router;

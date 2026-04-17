@@ -5,6 +5,7 @@ import { LogOut, User, LayoutDashboard, Settings, Bell, Search, Palette } from '
 import toast from 'react-hot-toast';
 import ThemeCustomizer from './ThemeCustomizer';
 import ProfileSettings from './ProfileSettings';
+import NotificationsPanel from './NotificationsPanel';
 import authService from '../api/authService';
 import './Dashboard.css';
 
@@ -74,7 +75,24 @@ const Dashboard = () => {
                 <nav className="sidebar-nav">
                     <div className={`nav-item ${activeTab === 'dashboard' ? 'active' : ''}`} onClick={() => setActiveTab('dashboard')}><LayoutDashboard size={20} /> Dashboard</div>
                     <div className={`nav-item ${activeTab === 'profile' ? 'active' : ''}`} onClick={() => setActiveTab('profile')}><User size={20} /> Profile</div>
-                    <div className={`nav-item ${activeTab === 'notifications' ? 'active' : ''}`} onClick={() => setActiveTab('notifications')}><Bell size={20} /> Notifications</div>
+                    <div className={`nav-item ${activeTab === 'notifications' ? 'active' : ''}`} onClick={() => setActiveTab('notifications')} style={{position: 'relative'}}>
+                        <Bell size={20} /> 
+                        Notifications
+                        {profileData?.notifications?.filter(n => !n.isRead).length > 0 && (
+                            <span style={{
+                                position: 'absolute',
+                                right: '15px',
+                                background: '#f43f5e',
+                                color: 'white',
+                                fontSize: '0.7rem',
+                                padding: '2px 6px',
+                                borderRadius: '10px',
+                                fontWeight: 'bold'
+                            }}>
+                                {profileData.notifications.filter(n => !n.isRead).length}
+                            </span>
+                        )}
+                    </div>
                     <div className="nav-item" onClick={() => setIsCustomizerOpen(true)}><Palette size={20} /> Personalize</div>
                     <div className={`nav-item ${activeTab === 'settings' ? 'active' : ''}`} onClick={() => setActiveTab('settings')}><Settings size={20} /> Settings</div>
                 </nav>
@@ -186,10 +204,10 @@ const Dashboard = () => {
                             )}
 
                             {activeTab === 'notifications' && (
-                                <motion.div initial={{opacity:0}} animate={{opacity:1}} className="recent-activity">
-                                    <h3>Notifications</h3>
-                                    <p style={{color: 'var(--text-secondary)', marginTop:'1rem'}}>Real-time alerts will appear here.</p>
-                                </motion.div>
+                                <NotificationsPanel 
+                                    notifications={profileData?.notifications} 
+                                    onMarkRead={fetchProfile} 
+                                />
                             )}
 
                              {activeTab === 'settings' && (

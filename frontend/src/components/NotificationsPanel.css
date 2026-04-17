@@ -1,0 +1,172 @@
+.notifications-panel-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding-bottom: 2rem;
+}
+
+.notifications-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--bg-card);
+    backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--card-border);
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.4), inset 0 0 20px var(--card-glow);
+}
+
+.header-info h2 {
+    display: flex;
+    align-items: center;
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    margin-bottom: 0.3rem;
+}
+
+.mark-read-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(99, 102, 241, 0.15);
+    color: var(--primary);
+    border: 1px solid var(--primary);
+    padding: 0.8rem 1.2rem;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.mark-read-btn:hover:not(:disabled) {
+    background: var(--primary);
+    color: white;
+    box-shadow: 0 5px 15px var(--card-glow);
+}
+
+.mark-read-btn:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}
+
+.notifications-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.notification-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    background: var(--bg-card);
+    backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    padding: 1.5rem;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.notification-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+
+.notification-card.unread {
+    background: rgba(40, 44, 70, 0.6);
+    border-left: 4px solid var(--primary);
+}
+
+.notif-icon-wrapper {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 0.8rem;
+    border-radius: 50%;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.notification-card.unread .notif-icon-wrapper {
+    color: var(--primary);
+    background: rgba(99, 102, 241, 0.15);
+}
+
+.pulse-icon {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.notif-content {
+    flex: 1;
+}
+
+.notif-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.notif-top h4 {
+    color: var(--text-primary);
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+.notif-time {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.notif-content p {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin: 0;
+}
+
+.notification-card.unread .notif-content p {
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.unread-dot {
+    width: 10px;
+    height: 10px;
+    background-color: var(--primary);
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    right: 1.5rem;
+    transform: translateY(-50%);
+    box-shadow: 0 0 10px var(--primary);
+}
+
+.empty-notifications {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+    text-align: center;
+    background: var(--bg-card);
+    backdrop-filter: blur(var(--glass-blur));
+    border-radius: 20px;
+    border: 1px dashed var(--card-border);
+}
+
+.empty-notifications h3 {
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.empty-notifications p {
+    color: var(--text-secondary);
+}

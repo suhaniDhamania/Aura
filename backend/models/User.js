@@ -37,6 +37,12 @@ const userSchema = new mongoose.Schema({
         text: String,
         type: { type: String, default: 'info' }, // 'info', 'success', 'warning'
         createdAt: { type: Date, default: Date.now }
+    }],
+    notifications: [{
+        title: String,
+        message: String,
+        isRead: { type: Boolean, default: false },
+        createdAt: { type: Date, default: Date.now }
     }]
 }, { timestamps: true });
 
