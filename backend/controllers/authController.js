@@ -256,3 +256,52 @@ exports.markNotificationsRead = async (req, res) => {
         res.status(500).send('Server Error');
     }
 };
+
+exports.changePassword = async (req, res) => {
+    try {
+        const { currentPassword, newPassword } = req.body;
+        const user = await User.findById(req.user.id);
+
+        if (!user) return res.status(404).json({ message: 'User not found' });
+
+        // Verify current password
+        const isMatch = await bcrypt.compare(currentPassword, user.password);
+        if (!isMatch) return res.status(400).json({ message: 'Incorrect current password' });
+
+        if (currentPassword === newPassword) {
+            return res.status(400).json({ message: 'New password cannot be the same as current password' });
+        }
+
+        // Hash and save new password
+        const salt = await bcrypt.genSalt(10);
+        user.password = await bcrypt.hash(newPassword, salt);
+
+        user.activities.push({ text: 'Account password changed securely', type: 'warning' });
+        
+        // Add a security notification
+        user.notifications.push({
+            title: 'Security Alert',
+            message: 'Your account password was recently changed. If this wasn\'t you, please contact support immediately.',
+            isRead: false
+        });
+
+        await user.save();
+        res.json({ message: 'Password updated successfully' });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+};
+
+exports.deleteAccount = async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id);
+        if (!user) return res.status(404).json({ message: 'User not found' });
+
+        await User.findByIdAndDelete(req.user.id);
+        res.json({ message: 'Account permanently deleted' });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+};

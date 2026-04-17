@@ -101,6 +101,33 @@ const authService = {
         } catch (error) {
             throw error.response?.data || { message: 'Network error or server down' };
         }
+    },
+
+    changePassword: async (passwordData) => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.put(
+                `${API_BASE_URL}/auth/settings/password`,
+                passwordData,
+                { headers: { 'x-auth-token': token } }
+            );
+            return response.data;
+        } catch (error) {
+            throw error.response?.data || { message: 'Network error or server down' };
+        }
+    },
+
+    deleteAccount: async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.delete(
+                `${API_BASE_URL}/auth/settings/account`,
+                { headers: { 'x-auth-token': token } }
+            );
+            return response.data;
+        } catch (error) {
+            throw error.response?.data || { message: 'Network error or server down' };
+        }
     }
 };
 

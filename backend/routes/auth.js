@@ -32,4 +32,14 @@ router.put('/profile', auth, authController.updateProfile);
 // @access  Private
 router.put('/notifications/read', auth, authController.markNotificationsRead);
 
+// @route   PUT api/auth/settings/password
+// @desc    Change user password
+// @access  Private
+router.put('/settings/password', auth, authController.changePassword);
+
+// @route   DELETE api/auth/settings/account
+// @desc    Delete user account
+// @access  Private
+router.delete('/settings/account', auth, authController.deleteAccount);
+
 module.exports = router;

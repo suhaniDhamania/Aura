@@ -6,6 +6,7 @@ import toast from 'react-hot-toast';
 import ThemeCustomizer from './ThemeCustomizer';
 import ProfileSettings from './ProfileSettings';
 import NotificationsPanel from './NotificationsPanel';
+import SettingsPanel from './SettingsPanel';
 import authService from '../api/authService';
 import './Dashboard.css';
 
@@ -211,10 +212,7 @@ const Dashboard = () => {
                             )}
 
                              {activeTab === 'settings' && (
-                                <motion.div initial={{opacity:0}} animate={{opacity:1}} className="recent-activity">
-                                    <h3>Account Settings</h3>
-                                    <p style={{color: 'var(--text-secondary)', marginTop:'1rem'}}>Security, Password reset, and more options will go here.</p>
-                                </motion.div>
+                                <SettingsPanel user={user} />
                             )}
                         </>
                     )}
